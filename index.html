@@ -6,13 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anim Trigo</title>
     <style>
+        html,body{
+            height: 100%;
+            width: 100%;
+        }
+        body{
+            margin: 0px;
+        }
         .zones-container{
             display: flex;
             display: flex;
             flex-direction: row;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             align-content: stretch;
             justify-content: space-between;
+            height: 100%;
+            width: 100%;
         }
         .contextual-zone{
             display: flex;
@@ -20,6 +29,16 @@
             flex-wrap: nowrap;
             justify-content: center;
             align-items: stretch;
+        }
+        .canvas-zone{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            max-width: 100%;
+            flex: 2;
         }
     </style>
 </head>
@@ -53,6 +72,8 @@
     </div>
 </body>
 <script>
+    const defWidth = 100;
+    const defHeight = 100;
     /** @type {HTMLCanvasElement} */
     let myCanvas = document.getElementById("myCanvas")
     let lblAngle = document.getElementById("angle")
@@ -138,6 +159,21 @@
 
         //console.log(Math.cos(angle),Math.sin(angle) )
     }
+    let resize = () =>{
+        console.log(innerWidth)
+        // get the max size that fits both width and height by finding the min scale
+        var canvasScale = Math.min((innerWidth -100) / defWidth, (innerHeight -100) / defHeight);
+        // or for max size that fills
+        // canvasScale = Math.max(innerWidth / defWidth, innerHeight / defHeight);
+        // now set canvas size and resolution to the new scale
+        myCanvas.style.width = (myCanvas.width = Math.floor(defWidth * canvasScale)) + "px";
+        myCanvas.style.height = (myCanvas.height = Math.floor(defHeight * canvasScale)) + "px";
+        w = myCanvas.width;
+        h = myCanvas.height;
+        draw()
+    }
+    resize()
+    window.addEventListener("resize", resize)
     let slider = document.getElementById("angleValue")
     slider.max = Math.PI *2 
     slider.addEventListener("change", (e) =>{
