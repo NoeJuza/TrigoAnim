@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anim Trigo</title>
+    <style>
+        .zones-container{
+            display: flex;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            justify-content: space-between;
+        }
+        .contextual-zone{
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: stretch;
+        }
+    </style>
+</head>
+<body>
+    <div class="zones-container">
+        <div class="contextual-zone">
+            <div>
+                <label for="angleValue">Angle:</label>
+                <input type="range" value="0" name="angleValue" id="angleValue" min="0" step="0.01"/>
+            </div>
+            <div>
+                <p>α = <span id="angle">0</span> [rad]</p>
+                <p>sin(α) = <span id="sin">0</span></p>
+                <p>cos(α) = <span id="cos">1</span></p>
+                <p>tan(α) = <span id="tan">0</span></p>
+                <button id="autoAnim">Animation automatique</button>
+            </div>
+        </div>
+        <div class="canvas-zone">
+            <canvas width="800" height="800" id="myCanvas">
+            </canvas>
+        </div>
+    </div>
+</body>
+<script>
+    /** @type {HTMLCanvasElement} */
+    let myCanvas = document.getElementById("myCanvas")
+    let lblAngle = document.getElementById("angle")
+    let lblSin = document.getElementById("sin")
+    let lblCos = document.getElementById("cos")
+    let lblTan = document.getElementById("tan")
+    let btnAutoAnim = document.getElementById("autoAnim")
+    let w = myCanvas.width;
+    let h = myCanvas.height;
+    let angle = 0 // rad
+    let increment = 0.01 // rad
+    let anim = false;
+    /** @type {CanvasRenderingContext2D} */
+    let ctx = myCanvas.getContext("2d")
+    let draw = () =>{
+        ctx.fillStyle = "#000000"
+        ctx.strokeStyle = "#000000"
+
+        ctx.save()
+        ctx.lineWidth= 0.005
+        ctx.scale(w /2,h /2)
+        ctx.beginPath()
+        ctx.arc(1,1,1,0,Math.PI *2,true);
+        ctx.moveTo(1,0);
+        ctx.lineTo(1,2);
+        ctx.moveTo(0,1);
+        ctx.lineTo(2,1);
+        ctx.arc(1,1,0.1,0,Math.PI * 2 - angle, true)
+        ctx.stroke()
+        ctx.restore()
+
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth= 0.005
+        ctx.strokeStyle = "blue"
+        ctx.scale(w /2,h /2)
+        ctx.translate(1,1)
+        ctx.rotate(-angle)
+        ctx.moveTo(0,0);
+        ctx.lineTo(1,0);
+        ctx.stroke()
+        ctx.restore()
+
+        ctx.save()
+        let x,y;
+        x = (Math.cos(angle/2)) * 5
+        y = (Math.sin(angle/2)) * 5
+        ctx.scale(w /30,h /30)
+        ctx.translate(14.5 + x ,14.5- y )
+        ctx.font = '1px sans-serif';
+        ctx.fillText("α", 0.5,0.5);
+        ctx.restore()
+
+        ctx.save()
+        ctx.scale(w /2 ,h / 2)
+        ctx.beginPath()
+        ctx.lineWidth= 0.01
+        ctx.strokeStyle = "orange"
+        ctx.moveTo(1,1)
+        ctx.lineTo(Math.cos(angle)+1,1)
+        ctx.stroke()
+        ctx.restore()
+
+        ctx.save()
+        ctx.scale(w /2,h /2)
+        ctx.beginPath()
+        ctx.lineWidth= 0.01
+        ctx.strokeStyle = "green"
+        ctx.moveTo(1,1)
+        ctx.lineTo(1,-Math.sin(angle) + 1)
+        ctx.stroke()
+        ctx.restore()
+
+        ctx.save()
+        ctx.scale(w /2,h /2)
+        ctx.beginPath()
+        ctx.lineWidth= 0.01
+        ctx.strokeStyle = "red"
+        ctx.moveTo(2,1)
+        ctx.lineTo(2,-Math.tan(angle) + 1)
+        ctx.stroke()
+        ctx.restore()
+
+        //console.log(Math.cos(angle),Math.sin(angle) )
+    }
+    let slider = document.getElementById("angleValue")
+    slider.max = Math.PI *2 
+    slider.addEventListener("change", (e) =>{
+        let a = e.target.value
+        if (parseFloat(a) >= 6.28 ){
+            a = 0
+            e.target.value = 0
+        }
+        lblAngle.innerText = (Math.floor(a * 100)) / 100
+        lblCos.innerText = Math.cos(a)
+        lblSin.innerText  = Math.sin(a)
+        lblTan.innerText = Math.tan(a)
+        angle = parseFloat(a)
+        ctx.clearRect(0,0,w,h)
+        draw()
+    })
+    draw()
+    btnAutoAnim.addEventListener("click", () =>{
+        anim = (!anim)
+        const interFunc = () =>{
+            angle = angle >= 6.28 ? 0 : angle+increment
+            lblAngle.innerText = (Math.floor(angle * 100)) / 100
+            lblCos.innerText = Math.cos(angle)
+            lblSin.innerText  = Math.sin(angle)
+            lblTan.innerText = Math.tan(angle)
+            slider.value = angle
+            ctx.clearRect(0,0,w,h)
+            draw()
+        }
+        if (anim){
+            interRef = setInterval(interFunc,10);
+        }
+        else{
+            let a = clearInterval(interRef)
+        }
+
+    })
+</script>
+</html>
